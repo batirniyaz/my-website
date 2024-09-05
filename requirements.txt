@@ -1,0 +1,10 @@
+fastapi~=0.112.0
+uvicorn
+sqlalchemy~=2.0.32
+databases
+asyncpg
+alembic
+pydantic
+pydantic-settings
+
+python-dotenv~=1.0.1
