@@ -21,4 +21,14 @@ async def create_personal_endpoint(
     return await create_personal(db, personal)
 
 
+@router.post("/upl_img", response_model=PersonalResponse)
+async def upload_main_image_endpoint(
+        person_id: int,
+        file: UploadFile = File(),
+        db: AsyncSession = Depends(get_async_session)
+):
+    """
+    Upload main image
+    """
+    return await upload_main_image(db, file, person_id)
 
