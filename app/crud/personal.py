@@ -71,3 +71,15 @@ async def update_personal(db: AsyncSession, person_id: int, personal: PersonalUp
     await db.commit()
 
     return db_personal
+
+
+async def delete_personal(db: AsyncSession, person_id: int):
+    result = await db.execute(select(Personal).filter_by(id=person_id))
+    db_personal = result.scalar_one_or_none()
+    if not db_personal:
+        raise HTTPException(status_code=404, detail="Personal not found")
+
+    await db.delete(db_personal)
+    await db.commit()
+
+    return {"message": f"Personal {person_id} deleted"}
