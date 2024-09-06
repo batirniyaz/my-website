@@ -22,3 +22,32 @@ async def create_personal(db: AsyncSession, personal: PersonalCreate):
 
 
 
+async def upload_main_image(db: AsyncSession, file: UploadFile, person_id: int):
+    try:
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            region_name=AWS_REGION_NAME
+        )
+
+        s3.upload_fileobj(
+            file.file,
+            AWS_BUCKET_NAME,
+            file.filename,
+            ExtraArgs={"ContentType": file.content_type}
+        )
+
+        image_url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION_NAME}.amazonaws.com/{file.filename}"
+
+        db_personal = await db.execute(select(Personal).filter_by(id=person_id))
+        db_personal = db_personal.scalar_one_or_none()
+
+        db_personal.main_image = image_url
+        await db.commit()
+
+        return db_personal
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
