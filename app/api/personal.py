@@ -32,3 +32,12 @@ async def upload_main_image_endpoint(
     """
     return await upload_main_image(db, file, person_id)
 
+
+@router.get("/", response_model=List[PersonalResponse])
+async def get_personals_endpoint(
+        db: AsyncSession = Depends(get_async_session)
+):
+    """
+    Get a list of personals
+    """
+    return await get_personals(db)
