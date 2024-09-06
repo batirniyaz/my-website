@@ -51,3 +51,10 @@ async def upload_main_image(db: AsyncSession, file: UploadFile, person_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+async def get_personals(db: AsyncSession):
+    result = await db.execute(select(Personal))
+    personals = result.scalars().all()
+    if not personals:
+        raise HTTPException(status_code=404, detail="Personal not found")
+
+    return personals
