@@ -21,7 +21,6 @@ async def create_personal(db: AsyncSession, personal: PersonalCreate):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
 async def upload_main_image(db: AsyncSession, file: UploadFile, person_id: int):
     try:
         s3 = boto3.client(
