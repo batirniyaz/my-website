@@ -4,7 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.database import get_async_session
-from app.crud.personal import create_personal, upload_main_image, get_personals, update_personal
+from app.crud.personal import (
+    create_personal,
+    upload_main_image,
+    get_personals,
+    update_personal,
+    delete_personal
+)
 from app.schemas.personal import PersonalCreate, PersonalResponse, PersonalUpdate
 
 router = APIRouter()
@@ -53,3 +59,14 @@ async def update_personal_endpoint(
     Update personal
     """
     return await update_personal(db, person_id, personal)
+
+
+@router.delete("/{person_id}")
+async def delete_personal_endpoint(
+        person_id: int,
+        db: AsyncSession = Depends(get_async_session)
+):
+    """
+    Delete personal
+    """
+    return await delete_personal(db, person_id)
