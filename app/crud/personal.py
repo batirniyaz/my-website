@@ -57,3 +57,17 @@ async def get_personals(db: AsyncSession):
         raise HTTPException(status_code=404, detail="Personal not found")
 
     return personals
+
+
+async def update_personal(db: AsyncSession, person_id: int, personal: PersonalUpdate):
+    result = await db.execute(select(Personal).filter_by(id=person_id))
+    db_personal = result.scalar_one_or_none()
+    if not db_personal:
+        raise HTTPException(status_code=404, detail="Personal not found")
+
+    for key, value in personal.model_dump().items():
+        setattr(db_personal, key, value)
+
+    await db.commit()
+
+    return db_personal
