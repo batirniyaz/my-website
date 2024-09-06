@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.database import get_async_session
@@ -12,11 +12,13 @@ from app.crud.personal import (
     delete_personal
 )
 from app.schemas.personal import PersonalCreate, PersonalResponse, PersonalUpdate
+from fastapi_cache.decorator import cache
 
 router = APIRouter()
 
 
 @router.post("/", response_model=PersonalResponse)
+@cache(expire=60)
 async def create_personal_endpoint(
         personal: PersonalCreate,
         db: AsyncSession = Depends(get_async_session),
@@ -28,6 +30,7 @@ async def create_personal_endpoint(
 
 
 @router.post("/upl_img", response_model=PersonalResponse)
+@cache(expire=60)
 async def upload_main_image_endpoint(
         person_id: int,
         file: UploadFile = File(),
@@ -40,6 +43,7 @@ async def upload_main_image_endpoint(
 
 
 @router.get("/", response_model=List[PersonalResponse])
+@cache(expire=60)
 async def get_personals_endpoint(
         db: AsyncSession = Depends(get_async_session)
 ):
@@ -50,6 +54,7 @@ async def get_personals_endpoint(
 
 
 @router.put("/{person_id}", response_model=PersonalResponse)
+@cache(expire=60)
 async def update_personal_endpoint(
         person_id: int,
         personal: PersonalUpdate,
