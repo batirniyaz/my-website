@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.database import get_async_session
-from app.crud.personal import create_personal, upload_main_image, get_personals
-from app.schemas.personal import PersonalCreate, PersonalResponse
+from app.crud.personal import create_personal, upload_main_image, get_personals, update_personal
+from app.schemas.personal import PersonalCreate, PersonalResponse, PersonalUpdate
 
 router = APIRouter()
 
@@ -41,3 +41,15 @@ async def get_personals_endpoint(
     Get a list of personals
     """
     return await get_personals(db)
+
+
+@router.put("/{person_id}", response_model=PersonalResponse)
+async def update_personal_endpoint(
+        person_id: int,
+        personal: PersonalUpdate,
+        db: AsyncSession = Depends(get_async_session)
+):
+    """
+    Update personal
+    """
+    return await update_personal(db, person_id, personal)
